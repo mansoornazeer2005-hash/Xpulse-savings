@@ -1,0 +1,11 @@
+{
+  "name": "XPULSE SAVINGS",
+  "short_name": "XPULSE SAVINGS",
+  "description": "Hero Xpulse 210 savings tracker",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0b100c",
+  "theme_color": "#101710",
+  "icons": []
+}

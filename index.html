@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101710">
+<meta name="description" content="Track your Hero Xpulse 210 savings goal.">
+<link rel="manifest" href="manifest.json">
+<title>XPULSE SAVINGS</title>
+<style>
+:root{color-scheme:dark;--bg:#0b100c;--panel:#151d16;--panel2:#1d281e;--green:#8cff65;--muted:#aab7aa;--line:#2a392c;--white:#f4f8f3}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#1a2a19 0,#0b100c 52%);color:var(--white);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;min-height:100vh}
+main{width:min(100%,520px);margin:auto;padding:24px 17px 38px}.top{display:flex;justify-content:space-between;align-items:center;margin:6px 0 24px}.brand{font-weight:900;letter-spacing:1.6px;font-size:18px}.tag{color:var(--green);font-size:11px;font-weight:800;border:1px solid #43683c;padding:6px 9px;border-radius:99px}
+.hero{background:linear-gradient(145deg,#1a281a,#121912);border:1px solid #304531;border-radius:25px;padding:22px 20px;box-shadow:0 15px 45px #0005}.eyebrow{color:var(--muted);font-size:12px;letter-spacing:1.4px;font-weight:800}.balance{font-size:clamp(37px,10vw,53px);line-height:1.1;letter-spacing:-1.8px;font-weight:950;color:var(--green);margin:8px 0 7px;overflow-wrap:anywhere}.sub{font-size:13px;color:var(--muted)}.progress-head{display:flex;justify-content:space-between;gap:10px;margin:24px 0 9px;font-size:12px;font-weight:750}.track{height:11px;background:#2a352b;border-radius:99px;overflow:hidden}.fill{height:100%;width:0;background:linear-gradient(90deg,#63d84c,#b1ff7c);border-radius:99px;transition:width .25s}.percent{color:var(--green);font-size:12px;font-weight:850;margin-top:9px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:13px 0}.stat,.section{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px}.stat small{display:block;color:var(--muted);font-size:11px;font-weight:750;letter-spacing:.8px;text-transform:uppercase}.stat strong{display:block;font-size:25px;margin-top:7px;letter-spacing:-.5px}.stat .green{color:var(--green)}.section{margin-top:13px}.section-title{font-weight:850;font-size:16px;margin-bottom:13px}.row{display:flex;gap:9px}.amount{min-width:0;flex:1;background:#0d140e;color:var(--white);border:1px solid #344334;border-radius:12px;padding:14px;font-size:16px;outline:none}.amount:focus{border-color:var(--green)}button{border:0;border-radius:12px;font-size:14px;font-weight:850;padding:13px 15px;cursor:pointer}.primary{background:var(--green);color:#10200d}.secondary{background:var(--panel2);color:var(--white);border:1px solid var(--line)}.full{width:100%;margin-top:10px}.hint{color:var(--muted);font-size:11px;line-height:1.5;margin-top:10px}.history{margin-top:13px}.entry{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid var(--line)}.entry:last-child{border-bottom:0}.entry b{display:block;font-size:13px}.entry small{color:var(--muted);font-size:11px}.entry .money{color:var(--green);font-weight:850;white-space:nowrap}.empty{color:var(--muted);font-size:13px;padding:10px 0}.footer{text-align:center;color:#819080;font-size:11px;margin:20px 0 0}.danger{color:#ff9b91}.actions{display:flex;gap:8px;margin-top:10px}.actions button{flex:1;font-size:12px;padding:11px 7px}
+</style>
+</head>
+<body>
+<main>
+  <div class="top"><div class="brand">🏍️ XPULSE SAVINGS</div><div class="tag">MISSION ON</div></div>
+  <section class="hero">
+    <div class="eyebrow">BALANCE LEFT TO TARGET</div>
+    <div class="balance" id="balance">₹1,00,000</div>
+    <div class="sub">Target ₹1,00,000 · July 2027</div>
+    <div class="progress-head"><span>YOUR PROGRESS</span><span id="fraction">₹0 / ₹1,00,000</span></div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <div class="percent" id="percent">0% COMPLETE 💚</div>
+  </section>
+  <div class="stats">
+    <div class="stat"><small>💰 Total saved</small><strong class="green" id="total">₹0</strong></div>
+    <div class="stat"><small>📅 Saving days</small><strong id="days">0</strong></div>
+  </div>
+  <section class="section">
+    <div class="section-title">➕ Add today's savings</div>
+    <div class="row"><input class="amount" id="amount" type="number" min="1" step="1" inputmode="numeric" value="200" aria-label="Amount saved in rupees"><button class="primary" id="saveBtn">SAVE ₹</button></div>
+    <div class="hint">Default is ₹200. Enter the amount you actually saved. Each save creates the next day entry; your record stays on this device.</div>
+  </section>
+  <section class="section">
+    <div class="section-title">📒 Savings history</div>
+    <div id="history"><div class="empty">Your first saving will appear here.</div></div>
+    <div class="actions"><button class="secondary" id="exportBtn">Export backup</button><button class="secondary" id="importBtn">Import backup</button><input id="fileInput" type="file" accept="application/json,.json" hidden></div>
+    <div class="hint">Tip: export a backup now and then. Browser data can be cleared by phone settings or uninstalling the browser.</div>
+  </section>
+  <div class="footer">ONE DAY AT A TIME. XPULSE 210 🏁</div>
+</main>
+<script>
+(() => {
+ const GOAL=100000, KEY='xpulse-savings-v1';
+ const fmt=n=>'₹'+Math.round(n).toLocaleString('en-IN');
+ let entries=[];
+ try { const parsed=JSON.parse(localStorage.getItem(KEY)||'[]'); if(Array.isArray(parsed)) entries=parsed.filter(x=>x&&Number.isFinite(x.amount)&&x.amount>0); } catch {}
+ const $=id=>document.getElementById(id);
+ const total=()=>entries.reduce((s,e)=>s+e.amount,0);
+ function persist(){try{localStorage.setItem(KEY,JSON.stringify(entries));}catch{alert('Could not save to browser storage. Please export a backup.');}}
+ function render(){
+  const sum=total(), left=Math.max(0,GOAL-sum), pct=Math.min(100,sum/GOAL*100);
+  $('balance').textContent=fmt(left); $('total').textContent=fmt(sum); $('days').textContent=entries.length;
+  $('fraction').textContent=fmt(sum)+' / '+fmt(GOAL); $('fill').style.width=pct+'%'; $('percent').textContent=pct.toFixed(2)+'% COMPLETE 💚';
+  const hist=$('history'); hist.innerHTML='';
+  if(!entries.length){hist.innerHTML='<div class="empty">Your first saving will appear here.</div>';return;}
+  [...entries].reverse().forEach(e=>{
+   const div=document.createElement('div');div.className='entry';
+   const left=document.createElement('div'), b=document.createElement('b'), small=document.createElement('small'), money=document.createElement('div');
+   b.textContent='Day '+e.day; small.textContent=e.date||'Saved'; money.className='money';money.textContent='+'+fmt(e.amount);
+   left.append(b,small);div.append(left,money);hist.append(div);
+  });
+ }
+ $('saveBtn').addEventListener('click',()=>{
+  const value=Number($('amount').value);
+  if(!Number.isFinite(value)||value<=0||!Number.isInteger(value)){alert('Enter a whole amount greater than ₹0.');return;}
+  const now=new Date(); const date=now.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});
+  entries.push({day:entries.length+1,amount:value,date,createdAt:now.toISOString()});persist();render();$('amount').value='200';
+ });
+ $('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({app:'XPULSE SAVINGS',goal:GOAL,entries},null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob), a=document.createElement('a');a.href=url;a.download='xpulse-savings-backup.json';a.click();URL.revokeObjectURL(url);
+ });
+ $('importBtn').addEventListener('click',()=>$('fileInput').click());
+ $('fileInput').addEventListener('change',async ev=>{
+  const file=ev.target.files[0];if(!file)return;
+  try{const data=JSON.parse(await file.text());const list=Array.isArray(data)?data:data.entries;
+   if(!Array.isArray(list)||!list.every(x=>x&&Number.isFinite(x.amount)&&x.amount>0)){throw new Error('bad');}
+   if(!confirm('Import backup and replace the current history?'))return;
+   entries=list.map((x,i)=>({day:i+1,amount:Number(x.amount),date:x.date||'Imported'}));persist();render();alert('Backup imported.');
+  }catch{alert('That backup file is not valid.');}finally{ev.target.value='';}
+ });
+ if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js').catch(()=>{});
+ render();
+})();
+</script>
+</body>
+</html>
